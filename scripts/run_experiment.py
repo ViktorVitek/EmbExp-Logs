@@ -15,7 +15,7 @@ import exp_runner
 # parse arguments
 parser = argparse.ArgumentParser()
 parser.add_argument("exp_id", help="id of experiment in database", type=int)
-parser.add_argument("-bt", "--board_type", help="broad_type", choices=["rpi3", "rpi4"], default="rpi3")
+parser.add_argument("-bt", "--board_type", help="broad_type", choices=["rpi3", "rpi4", "genesys_2__cva6"], default="rpi3")
 
 parser.add_argument("-br", "--branchname", help="branch of ProgPlatform, default is 'scamv_{board_type}'")
 
@@ -58,6 +58,3 @@ print()
 with ldb.LogsDB() as db:
 	exp = experiment.Experiment(db, int(args.exp_id))
 	exp_runner.run_experiment(exp, progplat, args.board_type, args.branchname, args.conn_mode, force_cleanup, args.no_post_clean, True, run_input_state=args.input_state)
-
-
-

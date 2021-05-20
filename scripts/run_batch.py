@@ -19,7 +19,7 @@ import exp_runner
 # parse arguments
 parser = argparse.ArgumentParser()
 parser.add_argument("-ln", "--listname",    help="name of experiment list")
-parser.add_argument("-bt", "--board_type",  help="broad_type", choices=["rpi3", "rpi4"], default="rpi3")
+parser.add_argument("-bt", "--board_type",  help="broad_type", choices=["rpi3", "rpi4", "genesys_2__cva6"], default="rpi3")
 
 parser.add_argument(       "--run_once",    help="collect experiments in the beginning and run each experiment just once", action="store_true")
 
@@ -150,4 +150,3 @@ else:
 
 
 sys.exit(0 if successful else 1)
-

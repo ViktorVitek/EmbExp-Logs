@@ -18,8 +18,8 @@ from exp_runner import *
 
 # parse arguments
 parser = argparse.ArgumentParser()
-parser.add_argument("--arch_id",       help="architecture id, default: arm8")
-parser.add_argument("-bt", "--board_type", help="broad_type", choices=['rpi3', 'rpi4'])
+parser.add_argument("-ai", "--arch_id",       help="architecture id, default: arm8", choices=['arm8', 'rv64imac']) #why not default here?
+parser.add_argument("-bt", "--board_type", help="broad_type", choices=['rpi3', 'rpi4', 'genesys_2__cva6'])
 parser.add_argument("-rs", "--run_spec", help="spec of run made up of ProgPlatform commit hash and board type, for example: 13700076ab79095f15468f0c489fa587ac225626.rpi3")
 
 parser.add_argument("-ln", "--listname", help="list to use as set of experiments")
@@ -46,7 +46,7 @@ arch_id = args.arch_id
 board_type = args.board_type
 # defaults
 if arch_id == None:
-	arch_id = "arm8"
+	arch_id = "arm8" #why use default in parser?
 if board_type == None:
 	if arch_id == "arm8":
 		board_type = "rpi3"
@@ -54,8 +54,8 @@ if board_type == None:
 # obtain run_spec
 run_spec = args.run_spec
 if run_spec == None:
-	assert arch_id == "arm8"
-	assert board_type == "rpi3" or board_type == "rpi4"
+	assert arch_id == "arm8" or arch_id == "rv64imac"
+	assert board_type == "rpi3" or board_type == "rpi4" or board_type == "genesys_2__cva6"
 	progplat_hash = progplatform.get_embexp_ProgPlatform(None).get_branch_commit_hash(
 		progplatform.get_default_branch(board_type))
 	run_spec = experiment._mk_run_spec(progplat_hash, board_type)
@@ -189,5 +189,3 @@ if args.print_others:
 		print(exp_id)
 	print()
 	print()
-
-
