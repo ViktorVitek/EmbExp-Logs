@@ -13,15 +13,16 @@ def run_experiment(exp, progplat = None, board_type = None, branchname = None, c
 
 	exp_arch = exp.get_prog().get_arch()
 
+	#print(exp_arch);
 	# defaults
 	if board_type == None:
 		if exp_arch == "arm8":
 			board_type = "rpi3"
 
 	# can only handle arm8 at the moment, ...
-	assert exp_arch == "arm8"
+	assert exp_arch == "arm8" or exp_arch == "rv64imac"
 	# ... and run on rpi3 or rpi4
-	assert board_type == "rpi3" or board_type == "rpi4"
+	assert board_type == "rpi3" or board_type == "rpi4" or board_type == "genesys_2__cva6"
 
 
 	# can only handle exps1 and exps2
@@ -136,4 +137,3 @@ def run_experiment(exp, progplat = None, board_type = None, branchname = None, c
 		raise Exception("the output files differ")
 
 	return result
-
