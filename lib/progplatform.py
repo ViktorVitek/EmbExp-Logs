@@ -26,7 +26,7 @@ def get_embexp_ProgPlatform(embexp_arg):
 
 def get_default_branch(board_type):
 	assert board_type != None
-	assert board_type == "rpi3" or board_type == "rpi4"
+	assert board_type == "rpi3" or board_type == "rpi4" or board_type == "genesys_2__cva6"
 	return "scamv_" + board_type
 
 class ProgPlatform:
@@ -171,5 +171,3 @@ class ProgPlatform:
 		with open(os.path.join(self.progplat_path, "temp/uart.log"), "r") as f:
 				uartlogdata = f.read()
 		return uartlogdata
-
-

@@ -47,7 +47,7 @@ def gen_input_code_reg(regmap, printcomments=True):
 			asm_comment = f"\t// {reg} = 0x{val_str}"
 		asm += f"{asm_comment}\n{asm_val}\n"
 	return asm
-	
+
 def gen_strb_src_reg(reg, val, printcomments=True):
 	asm = ""
 	val_str = val.to_bytes(8, byteorder='big').hex()
@@ -63,7 +63,7 @@ def gen_strb_src_reg(reg, val, printcomments=True):
 
 # helper for mem_parse
 def uncacheable(cacheable_addr):
-    assert 0x80000000 < cacheable_addr < 2*(0x80000000)
+    assert 0x80000000 < cacheable_addr < 2*(0x80000000) #cachable, needs changing for riscv
     return cacheable_addr - 0x80000000
 
 # helper for gen_input_code_mem
@@ -71,8 +71,8 @@ def mem_parse(memmap):
 	flatten  = lambda l: [item for sublist in l for item in sublist]
 	def partition(addresses, patterns):
 		for pat in patterns:
-			yield [a[0] for a in addresses if a[1] == pat]	
-       
+			yield [a[0] for a in addresses if a[1] == pat]
+
 	adr_mask = ((2**64) - 1) - 0x7
 	off_mask = 7
 	patterns = set(map(lambda x : bin(x & adr_mask), memmap.keys()))
@@ -132,7 +132,7 @@ def gen_input_code_mem(memmap):
 				asm += gen_input_code_reg({"x0":baseaddr}, False)
 				asm += f"\tstrb w1, [x0, {str(offset)}]\n\n"
 	return asm
-	
+
 def gen_input_code(statemap):
 	memmap={}
 
@@ -311,5 +311,3 @@ def eval_uart_pair_cache_experiment(lines):
 		return f"special :::: {resultline}"
 	else:
 		raise Exception(f"the result line is not as expected: {lines[0]}")
-
-
