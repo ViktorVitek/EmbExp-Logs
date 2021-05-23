@@ -36,15 +36,15 @@ def gen_input_code_reg(regmap, printcomments=True):
 		assert val < 2**64
 		assert val >= 0
 		val_str = val.to_bytes(8, byteorder='big').hex()
-		asm_val_l1 = f"\tldr {reg}, =0x{val_str}\n"
+		asm_val_l1 = f"\tli {reg}, 0x{val_str}\n"
 		asm_val_lm = ""
-		for i in range(4):
-			hexstr = val_str[(4-i-1)*2*2:(4-i)*2*2]
-			asm_val_lm += f"\tmovk {reg}, #0x{hexstr}, lsl #{16 * i}\n"
+		#for i in range(4):
+		hexstr = val_str[0:15] #val_str[(4-i-1)*2*2:(4-i)*2*2]
+		asm_val_lm += f"\tli {reg}, 0x{hexstr}\n" # slli {reg}, {16 * i}\n
 		asm_val = asm_val_lm if use_constmov else asm_val_l1
 		asm_comment = ""
 		if printcomments:
-			asm_comment = f"\t// {reg} = 0x{val_str}"
+			asm_comment = f"\t# {reg} = 0x{val_str}"
 		asm += f"{asm_comment}\n{asm_val}\n"
 	return asm
 
@@ -54,17 +54,17 @@ def gen_strb_src_reg(reg, val, printcomments=True):
 	asm_val = ""
 	for i in range(1):
 		hexstr = val_str[(4-i-1)*2*2:(4-i)*2*2]
-		asm_val += f"\tmovk {reg}, #0x{hexstr}, lsl #{16 * i}\n"
+		asm_val += f"\tli {reg}, 0x{hexstr}\n slli {reg}, {16 * i}\n"
 	asm_comment = ""
 	if printcomments:
-		asm_comment = f"\t// {reg} = 0x{val_str}"
+		asm_comment = f"\t# {reg} = 0x{val_str}"
 	asm += f"{asm_comment}\n{asm_val}\n"
 	return asm
 
 # helper for mem_parse
 def uncacheable(cacheable_addr):
-    assert 0x80000000 < cacheable_addr < 2*(0x80000000) #cachable, needs changing for riscv
-    return cacheable_addr - 0x80000000
+    assert 0xa0000000 <= cacheable_addr < 0xc0000000 #cachable, needs changing for riscv
+    return cacheable_addr - 0x20000000
 
 # helper for gen_input_code_mem
 def mem_parse(memmap):
@@ -152,7 +152,7 @@ def gen_input_code(statemap):
 	regsetter = asm1
 
 	asm2 = gen_input_code_mem(memmap) # uses registers x0 and x1
-	asm3 = "\n\t// reset the temporary registers to zero\n\tmov x0, #0\n" + "\tmov x1, #0\n"
+	asm3 = "\n\t# reset the temporary registers to zero\n\tmv x0, x0\n" + "\tmv x1, x0\n"
 	memorysetter = asm2 + asm3
 
 	filecontents = f"{memorysetter}\n\n{regsetter}\n"
@@ -241,6 +241,8 @@ def parse_uart_single_cache_experiment_simp(lines, board_type):
 	num_sets = None
 	if board_type == "rpi3":
 		num_sets = 128
+	elif board_type == "genesys_2__cva6":
+		num_sets = 256
 	else:
 		raise Exception("unknown board type")
 	assert num_sets != None
