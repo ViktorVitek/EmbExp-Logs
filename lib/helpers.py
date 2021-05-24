@@ -28,7 +28,7 @@ def call_cmd(cmdl, error_msg, show_output = True, show_error = True):
 	if res != 0:
 		raise Exception(f"command {cmdl} not successful: {res} : {error_msg}")
 
-def gen_input_code_reg(regmap, printcomments=True):
+def gen_input_code_reg(regmap, printcomments=False):
 	asm = ""
 	use_constmov = True
 	for reg in regmap.keys():
@@ -39,8 +39,8 @@ def gen_input_code_reg(regmap, printcomments=True):
 		asm_val_l1 = f"\tli {reg}, 0x{val_str}\n"
 		asm_val_lm = ""
 		#for i in range(4):
-		hexstr = val_str[0:15] #val_str[(4-i-1)*2*2:(4-i)*2*2]
-		asm_val_lm += f"\tli {reg}, 0x{hexstr}\n" # slli {reg}, {16 * i}\n
+		hexstr = val_str[0:16] #val_str[(4-i-1)*2*2:(4-i)*2*2]
+		asm_val_lm += f"\tli {reg}, 0x{val_str}\n" # slli {reg}, {16 * i}\n
 		asm_val = asm_val_lm if use_constmov else asm_val_l1
 		asm_comment = ""
 		if printcomments:
@@ -48,13 +48,12 @@ def gen_input_code_reg(regmap, printcomments=True):
 		asm += f"{asm_comment}\n{asm_val}\n"
 	return asm
 
-def gen_strb_src_reg(reg, val, printcomments=True):
+def gen_strb_src_reg(reg, val, printcomments=False):
 	asm = ""
 	val_str = val.to_bytes(8, byteorder='big').hex()
 	asm_val = ""
-	for i in range(1):
-		hexstr = val_str[(4-i-1)*2*2:(4-i)*2*2]
-		asm_val += f"\tli {reg}, 0x{hexstr}\n slli {reg}, {16 * i}\n"
+	print(val_str)
+	asm_val += f"\tli {reg}, 0x{val_str}\n slli {reg}, {16 * i}\n"
 	asm_comment = ""
 	if printcomments:
 		asm_comment = f"\t# {reg} = 0x{val_str}"
@@ -152,7 +151,7 @@ def gen_input_code(statemap):
 	regsetter = asm1
 
 	asm2 = gen_input_code_mem(memmap) # uses registers x0 and x1
-	asm3 = "\n\t# reset the temporary registers to zero\n\tmv x0, x0\n" + "\tmv x1, x0\n"
+	asm3 = "\n\t\n\tmv x0, x0\n" + "\tmv x1, x0\n"
 	memorysetter = asm2 + asm3
 
 	filecontents = f"{memorysetter}\n\n{regsetter}\n"

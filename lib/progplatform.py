@@ -136,7 +136,7 @@ class ProgPlatform:
 		config_text += f"PROGPLAT_PARAMS       ={exp.get_exp_params()}\n"
 		config_text += f"PROGPLAT_BOARD        ={board_type}\n"
 		if exp_type == "exps2":
-			config_text += f"PROGPLAT_RUN_TIMEOUT  =60\n"
+			config_text += f"PROGPLAT_RUN_TIMEOUT  =180\n"
 		elif exp_type == "exps1":
 			config_text += f"PROGPLAT_RUN_TIMEOUT  =80\n"
 		config_text += f"__PROGPLAT_MUL_RUNS__ ={num_mul_runs}\n"
