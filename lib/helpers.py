@@ -52,11 +52,10 @@ def gen_strb_src_reg(reg, val, printcomments=False):
 	asm = ""
 	val_str = val.to_bytes(8, byteorder='big').hex()
 	asm_val = ""
-	print(val_str)
-	asm_val += f"\tli {reg}, 0x{val_str}\n slli {reg}, {16 * i}\n"
+	asm_val += f"\tli {reg}, 0x{val_str}\n"
 	asm_comment = ""
 	if printcomments:
-		asm_comment = f"\t# {reg} = 0x{val_str}"
+		asm_comment = f"\t# {reg} = 0x{val_str}\n"
 	asm += f"{asm_comment}\n{asm_val}\n"
 	return asm
 
@@ -113,11 +112,11 @@ def gen_input_code_mem(memmap):
 			bs = bytes(valbytes)
 
 			adr_str = (baseaddr).to_bytes(8, byteorder='big').hex()
-			asm += f"\t// MEM[0x{adr_str}] =LONG= 0x{bs.hex()}\n"
+			#asm += f"\t// MEM[0x{adr_str}] =LONG= 0x{bs.hex()}\n"
 
 			asm += gen_input_code_reg({"x1":(int.from_bytes(bs, byteorder='big'))}, False)
 			asm += gen_input_code_reg({"x0":baseaddr}, False)
-			asm += f"\tstr x1, [x0]\n\n"
+			asm += f"\tsw x1, 0(x2)\n\n"
 		else:
 			# else, we need to export them individually
 			for offset in basemap:
@@ -125,11 +124,11 @@ def gen_input_code_mem(memmap):
 
 				adr_str = (baseaddr+offset).to_bytes(8, byteorder='big').hex()
 				val_str = value.to_bytes(1, byteorder='big').hex()
-				asm += f"\t// MEM[0x{adr_str}] =BYTE= 0x{val_str}\n"
+				#asm += f"\t// MEM[0x{adr_str}] =BYTE= 0x{val_str}\n"
 
-				asm += gen_strb_src_reg("w1", value, False)
-				asm += gen_input_code_reg({"x0":baseaddr}, False)
-				asm += f"\tstrb w1, [x0, {str(offset)}]\n\n"
+				asm += gen_strb_src_reg("x1", value, False)
+				asm += gen_input_code_reg({"x2":baseaddr}, False)
+				asm += f"\tsw x1, {str(offset*4)}(x2)\n\n"
 	return asm
 
 def gen_input_code(statemap):
