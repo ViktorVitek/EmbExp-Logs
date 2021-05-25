@@ -177,9 +177,9 @@ def gen_readable(statemap):
 		assert val < 2**64
 		assert val >= 0
 		val_str = "0x" + val.to_bytes(8, byteorder='big').hex()
-		ts_str  = "0x" + ((val >>  0) & (0xFFFFFFFFFFFFFFFF - 0x3F)).to_bytes(8, byteorder='big').hex()
-		s_str   = "0x" + ((val >>  6) & 0x7F).to_bytes(1, byteorder='big').hex()
-		o_str   = "0x" + ((val >>  0) & 0x3F).to_bytes(1, byteorder='big').hex()
+		ts_str  = "0x" + ((val >>  0) & (0xFFFFFFFFFFFFFFFF - 0xFF)).to_bytes(8, byteorder='big').hex()
+		s_str   = "0x" + ((val >>  4) & 0xFF).to_bytes(1, byteorder='big').hex()
+		o_str   = "0x" + ((val >>  0) & 0xF).to_bytes(1, byteorder='big').hex()
 		s += f"{reg.ljust(5)} = {val_str} ::: (ts={ts_str}, s={s_str}, o={o_str})\n"
 	return s
 
