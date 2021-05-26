@@ -107,7 +107,7 @@ class ProgPlatform:
 		with open(os.path.join(self.progplat_path, f"all/inc/experiment/{filename}"), "w+") as f:
 			f.write(contents)
 
-	def configure_experiment(self, board_type, exp, num_mul_runs = 10, run_input_state = None):
+	def configure_experiment(self, board_type, exp, num_mul_runs = 4, run_input_state = None):
 		assert self._writable
 		exp_type = exp.get_exp_type()
 		exp_type = exp_type if run_input_state == None else "exps1"
